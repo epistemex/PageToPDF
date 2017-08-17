@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="options.css">
+</head>
+<body>
+	<div>
+		<label>Papirst&oslash;rrelse: <select id="optPaper">
+			<option value="letter">US Brev</option>
+			<option value="a4">A4</option>
+			<option value="custom">Tilpasset</option>
+		</select></label>
+	</div>
+
+	<div>
+		<label class="optUnit">B: <input id="optWidth" class="optWH" maxLength="6" disabled></label>
+		<label class="optUnit">H: <input id="optHeight" class="optWH" maxLength="6" disabled></label>
+		<label><select id="optUnit" class="optUnit" disabled>
+			<option selected value="inch">"</option>
+			<option value="mm">mm</option>
+		</select></label>
+	</div>
+
+	<div class="sep"><label><input id="optLandscape" type="checkbox"> Landskap</label></div>
+	<div><label><input id="optBackground" type="checkbox" checked> Inkluder bakgrunn</label></div>
+
+	<div class="sep"><label><input id="optShrink" type="checkbox" checked> Tilpasset krymp</label></div>
+	<div><label>&nbsp;&nbsp;Skala: <input id="optScale" type="range" min="10" max="250" step="5" value="100" disabled></label> <span id="optScaleValue">100</span>%</div>
+
+	<div class="sep"><label>Marger: <input id="optMargins" type="range" min="0" max="1.5" step="0.25" value="0.5"></label> <span id="optMarginsValue">0.50</span>"</div>
+
+	<div class="sep"><label><input id="optShowTitle" type="checkbox"> Inkluder tittel</label></div>
+	<div><label><input id="optShowURL" type="checkbox"> Inkluder URL</label></div>
+	<div><label><input id="optShowPageNo" type="checkbox" checked> Inkluder sidenummer</label></div>
+
+	<div class="sep center"><button id="print">Lagre som PDF</button></div>
+
+<script src="options.js"></script>
+</body>
+</html>

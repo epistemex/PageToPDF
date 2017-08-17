@@ -1,0 +1,35 @@
+body {
+	padding:11px;
+	}
+div {
+	margin-bottom:3px;
+	}
+button {
+	border:none;
+	border-radius:2px;
+	background: #d84e4e;
+	color:#fff;
+	padding:5px 9px 6px 9px;
+	cursor:pointer;
+	}
+button:hover {
+	background: #f55353;
+	}
+.optWH {
+	width:42px;
+	}
+.optUnit {
+	font-size:0.8rem;
+	}
+.sep {
+	margin-top:11px;
+	}
+.center {
+	text-align: center;
+	}
+input[type="range"] {
+	width:60px;
+	}
+input[type="range"]:disabled {
+	opacity:0.5;
+	}

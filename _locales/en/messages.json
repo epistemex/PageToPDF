@@ -1,0 +1,8 @@
+{
+  "lang": {"message": "en"},
+  "title": {"message": "Page To PDF"},
+
+  "pageSavedOK": {"message": "Page saved successfully as PDF!"},
+  "pageSaveError": {"message": "ERROR: Could not save page as PDF!"},
+  "error": {"message": "ERROR: Unknown error occurred: "}
+}

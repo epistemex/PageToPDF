@@ -1,0 +1,8 @@
+{
+  "lang": {"message": "no"},
+  "title": {"message": "Side Til PDF"},
+
+  "pageSavedOK": {"message": "Side suksessfult lagret som PDF-fil!"},
+  "pageSaveError": {"message": "FEIL: Kunne ikke lagre side som PDF-fil!"},
+  "error": {"message": "FEIL: Ukjent feil oppstod: "}
+}
