@@ -2,7 +2,7 @@ body {
 	padding:11px;
 	}
 div {
-	margin-bottom:3px;
+	margin-bottom:4px;
 	}
 button {
 	border:none;
@@ -15,6 +15,12 @@ button {
 button:hover {
 	background: #f55353;
 	}
+input[type="range"] {
+	width:60px;
+	}
+input[type="range"]:disabled {
+	opacity:0.5;
+	}
 .optWH {
 	width:42px;
 	}
@@ -26,10 +32,4 @@ button:hover {
 	}
 .center {
 	text-align: center;
-	}
-input[type="range"] {
-	width:60px;
-	}
-input[type="range"]:disabled {
-	opacity:0.5;
 	}

@@ -10,24 +10,24 @@
 
 var getEl = document.getElementById.bind(document),
 
-	optPaper = getEl("optPaper"),
-	optWidth = getEl("optWidth"),		// v.0.4.0
-	optHeight = getEl("optHeight"),		// v.0.4.0
-	optUnit = getEl("optUnit"),			// v.0.4.0
+    optPaper = getEl("optPaper"),
+    optWidth = getEl("optWidth"),	  	// v.0.4.0
+    optHeight = getEl("optHeight"),		// v.0.4.0
+    optUnit = getEl("optUnit"),		  	// v.0.4.0
 
-	optLandscape = getEl("optLandscape"),
-	optBackground = getEl("optBackground"),
+    optLandscape = getEl("optLandscape"),
+    optBackground = getEl("optBackground"),
 
-	optShrink = getEl("optShrink"),
-	optScale = getEl("optScale"),
-	optScaleValue = getEl("optScaleValue"),
+    optShrink = getEl("optShrink"),
+    optScale = getEl("optScale"),
+    optScaleValue = getEl("optScaleValue"),
 
-	optMargins = getEl("optMargins"),
-	optMarginsValue = getEl("optMarginsValue"),
+    optMargins = getEl("optMargins"),
+    optMarginsValue = getEl("optMarginsValue"),
 
-	optShowTitle = getEl("optShowTitle"),
-	optShowURL = getEl("optShowURL"),
-	optShowPageNo = getEl("optShowPageNo");
+    optShowTitle = getEl("optShowTitle"),
+    optShowURL = getEl("optShowURL"),
+    optShowPageNo = getEl("optShowPageNo");
 
 /*----------------------------------------------------------------------
 
@@ -54,16 +54,16 @@ function handleClick(e) {
 	if (e.target.id === "print") {
 
 		var paper = optPaper.value,
-			orientation = optLandscape.checked ? 1 : 0,
-			background = optBackground.checked,
-			shrink = optShrink.checked,
-			scale = optScale.value / 100,
-			margins = +optMargins.value,
-			showTitle = optShowTitle.checked,
-			showURL = optShowURL.checked,
-			showPageNo = optShowPageNo.checked,
+        orientation = optLandscape.checked ? 1 : 0,
+        background = optBackground.checked,
+        shrink = optShrink.checked,
+        scale = optScale.value / 100,
+        margins = +optMargins.value,
+        showTitle = optShowTitle.checked,
+        showURL = optShowURL.checked,
+        showPageNo = optShowPageNo.checked,
 
-			width = 8.5, height = 11, unit = 0;
+        width = 8.5, height = 11, unit = 0;
 
 		// Set Paper Size (def. US Letter)
 		if (paper === "a4") {
@@ -93,8 +93,8 @@ function handleClick(e) {
 			"marginLeft"          : margins,
 			"headerLeft"          : showTitle ? "&T" : "",	// &T
 			"headerCenter"        : "",
-			"headerRight"         : "",						// &U
-			"footerLeft"          : showURL ? "&U" : "",	// &PT
+			"headerRight"         : "",					          	// &U
+			"footerLeft"          : showURL ? "&U" : "",	  // &PT
 			"footerCenter"        : "",
 			"footerRight"         : showPageNo ? "&PT" : ""	// &D
 		})
@@ -111,7 +111,7 @@ function parseNum(s, def) {
 	s = s.replace(",", ".").trim();
 	v = parseFloat(s);
 	if (isNaN(v)) v = def;
-	if (v < 1 || v >= 1000) v = def;
+	if (v < 1 || v >= 99999) v = def;
 	return v
 }
 
@@ -151,9 +151,9 @@ function saveOptions() {
 	browser.storage.local.set({
 		options: {
 			paper     : optPaper.value,
-			width     : parseNum(optWidth.value, 11),	// v.0.4.0
+			width     : parseNum(optWidth.value, 11), 	// v.0.4.0
 			height    : parseNum(optHeight.value, 8.5),	// v.0.4.0
-			unit      : optUnit.value,					// v.0.4.0
+			unit      : optUnit.value,			        		// v.0.4.0
 			landscape : optLandscape.checked,
 			background: optBackground.checked,
 			shrink    : optShrink.checked,
@@ -174,7 +174,7 @@ function loadOptions() {
 		options: {
 			paper     : "letter",
 			width     : "8.5",		// v.0.4.0
-			height    : "11",		// v.0.4.0
+			height    : "11",	  	// v.0.4.0
 			unit      : "inch",		// v.0.4.0
 			landscape : false,
 			background: true,
@@ -211,7 +211,7 @@ function loadOptions() {
 }
 
 function onError(err) {
-	console.log("Error: ", err)
+	//console.log("Error: ", err)
 }
 
 /*----------------------------------------------------------------------

@@ -39,7 +39,7 @@ function notify(msg) {
 		"type": "basic",
 		"title": "Page To PDF",
 		"message": msg,
-		"iconUrl": browser.extension.getURL("gfx/pdf_48.png")
+		"iconUrl": "gfx/pdf_32.png"
 	})
 	.then(null, onError);
 
@@ -55,7 +55,8 @@ function notify(msg) {
 }
 
 function onError(err) {
-	console.log("Error: " + err)
+  notify("An error occurred: " + err)
+	//console.log("Error: " + err)
 }
 
 browser.runtime.onMessage.addListener(msgHandler);
