@@ -8,11 +8,19 @@
 
 "use strict";
 
-var _id = "page-to-pdf";
+const _id = "page-to-pdf";
 
 function msgHandler(msg) { // , sender, sendResponse
-	browser.tabs.saveAsPDF(msg)
-		.then(function(status) {
+  // handle reader mode
+  let wasInReadmode = msg.wasInReadmode;
+  let wasReadmodeChecked = msg.wasReadmodeChecked;
+  delete msg.wasInReadmode;
+  delete msg.wasReadmodeChecked;
+
+  // set animated icon
+  browser.browserAction.setIcon({path: "gfx/pdf_anim32.png"});
+
+	browser.tabs.saveAsPDF(msg).then(status => {
 
 			switch(status.toLowerCase()) {
 				case "saved":
@@ -26,8 +34,12 @@ function msgHandler(msg) { // , sender, sendResponse
 			}
 			//sendResponse({response: status});
 
-		}, onError);
+    browser.browserAction.setIcon({path: "gfx/pdf_16.png"});
 
+    if (wasReadmodeChecked && !wasInReadmode) {
+        browser.tabs.toggleReaderMode().then(null);
+      }
+		}, onError);
 }
 
 /** @param {string} msg */

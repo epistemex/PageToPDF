@@ -8,26 +8,39 @@
 
 "use strict";
 
-var getEl = document.getElementById.bind(document),
+const
+  getEl = document.getElementById.bind(document),
 
-    optPaper = getEl("optPaper"),
-    optWidth = getEl("optWidth"),	  	// v.0.4.0
-    optHeight = getEl("optHeight"),		// v.0.4.0
-    optUnit = getEl("optUnit"),		  	// v.0.4.0
+  optPaper = getEl("optPaper"),
+  optWidth = getEl("optWidth"),	  	// v.0.4.0
+  optHeight = getEl("optHeight"),		// v.0.4.0
+  optUnit = getEl("optUnit"),		  	// v.0.4.0
 
-    optLandscape = getEl("optLandscape"),
-    optBackground = getEl("optBackground"),
+  optLandscape = getEl("optLandscape"),
+  optBackground = getEl("optBackground"),
 
-    optShrink = getEl("optShrink"),
-    optScale = getEl("optScale"),
-    optScaleValue = getEl("optScaleValue"),
+  optShrink = getEl("optShrink"),
+  optScale = getEl("optScale"),
+  optScaleValue = getEl("optScaleValue"),
 
-    optMargins = getEl("optMargins"),
-    optMarginsValue = getEl("optMarginsValue"),
+  optMargins = getEl("optMargins"),
+  optMarginsValue = getEl("optMarginsValue"),
 
-    optShowTitle = getEl("optShowTitle"),
-    optShowURL = getEl("optShowURL"),
-    optShowPageNo = getEl("optShowPageNo");
+  optShowTitle = getEl("optShowTitle"),
+  optShowURL = getEl("optShowURL"),
+  optShowPageNo = getEl("optShowPageNo"),
+
+  optAutoReadmode = getEl("optAutoReadmode"); // v.1.1.0
+
+/*----------------------------------------------------------------------
+
+	Current tab status
+
+----------------------------------------------------------------------*/
+let
+  currentTab,
+  wasReadmodeChecked = false,
+  wasReadmode = false;
 
 /*----------------------------------------------------------------------
 
@@ -52,62 +65,85 @@ document.onclick = handleClick;
 function handleClick(e) {
 
 	if (e.target.id === "print") {
-
-		var paper = optPaper.value,
-        orientation = optLandscape.checked ? 1 : 0,
-        background = optBackground.checked,
-        shrink = optShrink.checked,
-        scale = optScale.value / 100,
-        margins = +optMargins.value,
-        showTitle = optShowTitle.checked,
-        showURL = optShowURL.checked,
-        showPageNo = optShowPageNo.checked,
-
-        width = 8.5, height = 11, unit = 0;
-
-		// Set Paper Size (def. US Letter)
-		if (paper === "a4") {
-			unit = 1;	// mm
-			width = 210;
-			height = 297;
-		}
-		else if (paper === "custom") {
-			unit = optUnit.value === "inch" ? 0 : 1;
-			width = parseNum(optWidth.value, 8.5);
-			height = parseNum(optHeight.value, 11);
-		}
-
-		// send options to BG so we can utilize notification
-		browser.runtime.sendMessage({
-			"paperWidth"          : width,
-			"paperHeight"         : height,
-			"paperSizeUnit"       : unit,
-			"orientation"         : orientation,
-			"showBackgroundImages": background,
-			"showBackgroundColors": background,
-			"shrinkToFit"         : shrink,
-			"scaling"             : scale,
-			"marginTop"           : margins,
-			"marginRight"         : margins,
-			"marginBottom"        : margins,
-			"marginLeft"          : margins,
-			"headerLeft"          : showTitle ? "&T" : "",	// &T
-			"headerCenter"        : "",
-			"headerRight"         : "",					          	// &U
-			"footerLeft"          : showURL ? "&U" : "",	  // &PT
-			"footerCenter"        : "",
-			"footerRight"         : showPageNo ? "&PT" : ""	// &D
-		})
-		.then(null, onError);
+	  if (optAutoReadmode.checked) _enterReadmode();
+    else _print();
 	}
 	else if (e.target.localName !== "html") {
 		updateScale();	// -> saveOptions() as shrink option affect scale slider
 	}
+
+	function _enterReadmode() {
+
+    browser.tabs.query({active: true}).then(tabs => {
+      if (!tabs.length) return;
+
+      let tab = currentTab = tabs[0];
+      wasReadmodeChecked = true;
+      wasReadmode = tab.isInReaderMode;
+
+      if (tab.isArticle && !tab.isInReaderMode) {
+        browser.tabs.toggleReaderMode().then(_print, _print);
+      }
+      else _print();
+    })
+  }
+
+  function _print() {
+    let
+      paper = optPaper.value,
+      orientation = optLandscape.checked ? 1 : 0,
+      background = optBackground.checked,
+      shrink = optShrink.checked,
+      scale = optScale.value / 100,
+      margins = +optMargins.value,
+      showTitle = optShowTitle.checked,
+      showURL = optShowURL.checked,
+      showPageNo = optShowPageNo.checked,
+
+      width = 8.5, height = 11, unit = 0;
+
+    // Set Paper Size (def. US Letter)
+    if (paper === "a4") {
+      unit = 1;	// mm
+      width = 210;
+      height = 297;
+    }
+    else if (paper === "custom") {
+      unit = optUnit.value === "inch" ? 0 : 1;
+      width = parseNum(optWidth.value, 8.5);
+      height = parseNum(optHeight.value, 11);
+    }
+
+    // send options to BG so we can utilize notification
+    browser.runtime.sendMessage({
+        "paperWidth"          : width,
+        "paperHeight"         : height,
+        "paperSizeUnit"       : unit,
+        "orientation"         : orientation,
+        "showBackgroundImages": background,
+        "showBackgroundColors": background,
+        "shrinkToFit"         : shrink,
+        "scaling"             : scale,
+        "marginTop"           : margins,
+        "marginRight"         : margins,
+        "marginBottom"        : margins,
+        "marginLeft"          : margins,
+        "headerLeft"          : showTitle ? "&T" : "",	// &T
+        "headerCenter"        : "",
+        "headerRight"         : "",					          	// &U
+        "footerLeft"          : showURL ? "&U" : "",	  // &PT
+        "footerCenter"        : "",
+        "footerRight"         : showPageNo ? "&PT" : "",// &D
+        "wasInReadmode"       : wasReadmode,
+        "wasReadmodeChecked"  : wasReadmodeChecked,
+      })
+      .then(null, onError);
+  }
 }
 
 // v.0.4.0
 function parseNum(s, def) {
-	var v;
+	let v;
 	s = s.replace(",", ".").trim();
 	v = parseFloat(s);
 	if (isNaN(v)) v = def;
@@ -136,7 +172,7 @@ function updateScale() {
 }
 
 function updateMargins() {
-	var v = +optMargins.value;
+	let v = +optMargins.value;
 
 	// if margins=0, ignore deco. settings
 	optMarginsValue.textContent = v.toFixed(2);
@@ -150,18 +186,19 @@ function updateMargins() {
 function saveOptions() {
 	browser.storage.local.set({
 		options: {
-			paper     : optPaper.value,
-			width     : parseNum(optWidth.value, 11), 	// v.0.4.0
-			height    : parseNum(optHeight.value, 8.5),	// v.0.4.0
-			unit      : optUnit.value,			        		// v.0.4.0
-			landscape : optLandscape.checked,
-			background: optBackground.checked,
-			shrink    : optShrink.checked,
-			scale     : +optScale.value,
-			margins   : +optMargins.value,
-			showTitle : optShowTitle.checked,
-			showPageNo: optShowPageNo.checked,
-			showURL   : optShowURL.checked
+			paper       : optPaper.value,
+			width       : parseNum(optWidth.value, 11), 	// v.0.4.0
+			height      : parseNum(optHeight.value, 8.5),	// v.0.4.0
+			unit        : optUnit.value,			        		// v.0.4.0
+			landscape   : optLandscape.checked,
+			background  : optBackground.checked,
+			shrink      : optShrink.checked,
+			scale       : +optScale.value,
+			margins     : +optMargins.value,
+			showTitle   : optShowTitle.checked,
+			showPageNo  : optShowPageNo.checked,
+			showURL     : optShowURL.checked,
+      autoReadmode: optAutoReadmode.checked
 		}
 	})
 	.then(null, onError);
@@ -172,23 +209,24 @@ function loadOptions() {
 
 		// defaults
 		options: {
-			paper     : "letter",
-			width     : "8.5",		// v.0.4.0
-			height    : "11",	  	// v.0.4.0
-			unit      : "inch",		// v.0.4.0
-			landscape : false,
-			background: true,
-			shrink    : true,
-			scale     : 100,
-			margins   : 0.5,
-			showTitle : false,
-			showURL   : false,
-			showPageNo: true
+			paper       : "letter",
+			width       : "8.5",		// v.0.4.0
+			height      : "11",	  	// v.0.4.0
+			unit        : "inch",		// v.0.4.0
+			landscape   : false,
+			background  : true,
+			shrink      : true,
+			scale       : 100,
+			margins     : 0.5,
+			showTitle   : false,
+			showURL     : false,
+			showPageNo  : true,
+      autoReadmode: false
 		}
 	})
-	.then(function(items) {
+	.then(items => {
 
-		var options = items.options;
+		const options = items.options;
 		if (options) {
 			optPaper.value = options.paper;
 			optWidth.value = options.width || "8.5";	// v.0.4.0
@@ -202,6 +240,7 @@ function loadOptions() {
 			optShowTitle.checked = options.showTitle;
 			optShowPageNo.checked = options.showPageNo;
 			optShowURL.checked = options.showURL;
+			optAutoReadmode.checked = options.autoReadmode;
 
 			updateMargins();
 			updateScale();
