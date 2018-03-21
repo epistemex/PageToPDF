@@ -3,7 +3,7 @@
   "name": "Page To PDF",
   "short_name": "Page2PDF",
   "description": "Save current tab as PDF file.",
-  "version": "1.1.0",
+  "version": "1.2.0",
 
   "developer": {
     "name": "K3N",
@@ -20,6 +20,7 @@
   "default_locale": "en",
 
   "permissions": [
+    "activeTab",
     "tabs",
     "storage",
     "notifications"

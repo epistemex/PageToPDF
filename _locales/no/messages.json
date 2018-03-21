@@ -3,6 +3,6 @@
   "title": {"message": "Side Til PDF"},
 
   "pageSavedOK": {"message": "Side lagres som PDF-fil..."},
-  "pageSaveError": {"message": "FEIL: Kunne ikke lagre side som PDF-fil!"},
+  "pageSaveError": {"message": "Kunne ikke lagre side som PDF-fil!"},
   "error": {"message": "FEIL: Ukjent feil oppstod: "}
 }

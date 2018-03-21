@@ -30,6 +30,7 @@ const
   optShowURL = getEl("optShowURL"),
   optShowPageNo = getEl("optShowPageNo"),
 
+  optInsertMeta = getEl("optInsertMeta"), // v.1.2.0
   optAutoReadmode = getEl("optAutoReadmode"); // v.1.1.0
 
 /*----------------------------------------------------------------------
@@ -65,27 +66,28 @@ document.onclick = handleClick;
 function handleClick(e) {
 
 	if (e.target.id === "print") {
-	  if (optAutoReadmode.checked) _enterReadmode();
-    else _print();
+    browser.tabs.query({active: true}).then(tabs => {
+      if (!tabs.length) return;
+
+      currentTab = tabs[0];
+
+      if (optAutoReadmode.checked) _enterReadmode(currentTab);
+      else _print(currentTab);
+    })
 	}
 	else if (e.target.localName !== "html") {
 		updateScale();	// -> saveOptions() as shrink option affect scale slider
 	}
 
-	function _enterReadmode() {
+	function _enterReadmode(tab) {
 
-    browser.tabs.query({active: true}).then(tabs => {
-      if (!tabs.length) return;
+    wasReadmodeChecked = true;
+    wasReadmode = tab.isInReaderMode;
 
-      let tab = currentTab = tabs[0];
-      wasReadmodeChecked = true;
-      wasReadmode = tab.isInReaderMode;
-
-      if (tab.isArticle && !tab.isInReaderMode) {
-        browser.tabs.toggleReaderMode().then(_print, _print);
-      }
-      else _print();
-    })
+    if (tab.isArticle && !tab.isInReaderMode) {
+      browser.tabs.toggleReaderMode().then(_print, _print);
+    }
+    else _print();
   }
 
   function _print() {
@@ -100,7 +102,9 @@ function handleClick(e) {
       showURL = optShowURL.checked,
       showPageNo = optShowPageNo.checked,
 
-      width = 8.5, height = 11, unit = 0;
+      width = 8.5, height = 11, unit = 0,
+
+      insertMeta = optInsertMeta.checked;
 
     // Set Paper Size (def. US Letter)
     if (paper === "a4") {
@@ -134,8 +138,13 @@ function handleClick(e) {
         "footerLeft"          : showURL ? "&U" : "",	  // &PT
         "footerCenter"        : "",
         "footerRight"         : showPageNo ? "&PT" : "",// &D
-        "wasInReadmode"       : wasReadmode,
-        "wasReadmodeChecked"  : wasReadmodeChecked,
+        "extended"            : {
+          "wasInReadmode"     : wasReadmode,
+          "wasReadmodeChecked": wasReadmodeChecked,
+          "insertMeta"        : insertMeta,
+          "title"             : currentTab.title,
+          "url"               : currentTab.url
+        }
       })
       .then(null, onError);
   }
@@ -198,7 +207,8 @@ function saveOptions() {
 			showTitle   : optShowTitle.checked,
 			showPageNo  : optShowPageNo.checked,
 			showURL     : optShowURL.checked,
-      autoReadmode: optAutoReadmode.checked
+      autoReadmode: optAutoReadmode.checked,        // v.1.1.0
+      insertMeta  : optInsertMeta.checked           // v.1.2.0
 		}
 	})
 	.then(null, onError);
@@ -221,7 +231,8 @@ function loadOptions() {
 			showTitle   : false,
 			showURL     : false,
 			showPageNo  : true,
-      autoReadmode: false
+      autoReadmode: false,    // v.1.1.0
+      insertMeta  : false     // v.1.2.0
 		}
 	})
 	.then(items => {
@@ -229,9 +240,9 @@ function loadOptions() {
 		const options = items.options;
 		if (options) {
 			optPaper.value = options.paper;
-			optWidth.value = options.width || "8.5";	// v.0.4.0
-			optHeight.value = options.height || "11";	// v.0.4.0
-			optUnit.value = options.unit || "inch";		// v.0.4.0
+			optWidth.value = options.width || "8.5";	        // v.0.4.0
+			optHeight.value = options.height || "11";	        // v.0.4.0
+			optUnit.value = options.unit || "inch";		        // v.0.4.0
 			optLandscape.checked = options.landscape;
 			optBackground.checked = options.background;
 			optShrink.checked = options.shrink;
@@ -240,7 +251,8 @@ function loadOptions() {
 			optShowTitle.checked = options.showTitle;
 			optShowPageNo.checked = options.showPageNo;
 			optShowURL.checked = options.showURL;
-			optAutoReadmode.checked = options.autoReadmode;
+			optAutoReadmode.checked = options.autoReadmode;   // v.1.1.0
+			optInsertMeta.checked = options.insertMeta;       // v.1.2.0
 
 			updateMargins();
 			updateScale();

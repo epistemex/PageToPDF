@@ -3,6 +3,6 @@
   "title": {"message": "Página a PDF"},
 
   "pageSavedOK": {"message": "Guardar página como PDF..."},
-  "pageSaveError": {"message": "ERROR: No se pudo guardar la página como PDF!"},
+  "pageSaveError": {"message": "No se pudo guardar la página como PDF!"},
   "error": {"message": "ERROR: Se produjo un error desconocido: "}
 }
